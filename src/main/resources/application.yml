@@ -1,0 +1,20 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  main:
+    banner-mode: "off"
+
+  jackson:
+    default-property-inclusion: NON_NULL
+
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://${DATABASE_HOSTNAME}:5432/${DATABASE_NAME}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+    hikari:
+      poolName: Hikari
+      auto-commit: false
