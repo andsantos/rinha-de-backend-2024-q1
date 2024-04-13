@@ -17,11 +17,11 @@ services:
       - 5432:5432
     volumes:
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
-    deploy:
-      resources:
-        limits:
-          cpus: "0.50"
-          memory: "100MB"
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "0.50"
+#          memory: "100MB"
 
   rinha-api: &api
     build:
@@ -38,11 +38,11 @@ services:
       - 8080:8080
     depends_on:
       - rinha-database
-    deploy:
-      resources:
-        limits:
-          cpus: '0.35'
-          memory: '200MB'
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.35'
+#          memory: '200MB'
 
   rinha-api2:
     <<: *api
@@ -59,6 +59,7 @@ services:
       - 9999:9999
     depends_on:
       - rinha-api
+      - rinha-api2
     deploy:
       resources:
         limits:
