@@ -1,0 +1,42 @@
+<configuration>
+
+    <contextName>prod</contextName>
+
+    <appender name="json-stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+            <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+                <prettyPrint>true</prettyPrint>
+            </jsonFormatter>
+            <timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampFormat>
+        </layout>
+    </appender>
+
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>http://${LOKI_SERVER}:3100/loki/api/v1/push</url>
+        </http>
+        <format>
+            <label>
+                <pattern>app=transacao-app,host=${HOSTNAME},level=%level</pattern>
+                <readMarkers>true</readMarkers>
+            </label>
+            <message>
+                <pattern>
+                    {
+                    "level":"%level",
+                    "class":"%logger{36}",
+                    "thread":"%thread",
+                    "message": "%message",
+                    "requestId": "%X{X-Request-ID}"
+                    }
+                </pattern>
+            </message>
+         </format>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="json-stdout" />
+        <appender-ref ref="LOKI"/>
+    </root>
+     
+</configuration>
