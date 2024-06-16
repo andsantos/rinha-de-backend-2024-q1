@@ -1,0 +1,26 @@
+version: '3.8'
+
+#networks:
+#  default:
+#    driver: bridge
+#    name: api
+
+services:
+  rinha-database:
+    image: postgres
+    container_name: rinha-database
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=rinhabackend
+    ports:
+      - 5432:5432
+    volumes:
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+#    networks:
+#      - api
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "0.50"
+#          memory: "100MB"
