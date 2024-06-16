@@ -9,12 +9,12 @@ spring:
 
   jackson:
     default-property-inclusion: NON_NULL
-
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://${DATABASE_HOSTNAME:127.0.0.1}:5432/${DATABASE_NAME:rinhabackend}
+    
+  r2dbc:
+    url: r2dbc:postgresql://${DATABASE_HOSTNAME:127.0.0.1}:5432/${DATABASE_NAME:rinhabackend}
     username: ${DATABASE_USER:root}
     password: ${DATABASE_PASSWORD:root}
-    hikari:
-      poolName: Hikari
-      auto-commit: false
+#    pool:
+#      enabled: true
+#      initial-size: 20
+#      max-size: 20

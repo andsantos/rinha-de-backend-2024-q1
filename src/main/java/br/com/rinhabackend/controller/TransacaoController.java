@@ -1,6 +1,5 @@
 package br.com.rinhabackend.controller;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +11,7 @@ import br.com.rinhabackend.dto.SaldoResponseDTO;
 import br.com.rinhabackend.dto.TransacaoRequestDTO;
 import br.com.rinhabackend.service.TransacaoService;
 import jakarta.validation.Valid;
+import reactor.core.publisher.Mono;
 
 @RestController
 public class TransacaoController {
@@ -22,13 +22,14 @@ public class TransacaoController {
     }
 
     @PostMapping("/clientes/{id}/transacoes")
-    public ResponseEntity<SaldoResponseDTO> criarTransacao(@RequestBody @Valid TransacaoRequestDTO request,
+    public Mono<SaldoResponseDTO> criarTransacao(
+            @RequestBody @Valid TransacaoRequestDTO request,
             @PathVariable Long id) {
-        return ResponseEntity.ok().body(service.criarTransacao(id, request));
+        return service.criarTransacao(id, request);
     }
 
     @GetMapping("/clientes/{id}/extrato")
-    public ResponseEntity<ExtratoDTO> obterExtrato(@PathVariable Long id) {
-        return ResponseEntity.ok().body(service.obterExtrato(id));
+    public Mono<ExtratoDTO> obterExtrato(@PathVariable Long id) {
+        return service.obterExtrato(id);
     }
 }
