@@ -36,7 +36,7 @@
 
     <root level="info">
         <appender-ref ref="json-stdout" />
-        <appender-ref ref="LOKI"/>
+<!--        <appender-ref ref="LOKI"/>-->
     </root>
      
 </configuration>

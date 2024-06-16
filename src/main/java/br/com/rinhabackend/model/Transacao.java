@@ -2,24 +2,15 @@ package br.com.rinhabackend.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
-@Table(name = "TRANSACOES")
+@Table("TRANSACOES")
 public class Transacao {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "CLIENTE_ID", nullable = false)
-    private Cliente cliente;
+    private int clienteId;
 
     private String tipo;
 
@@ -37,12 +28,12 @@ public class Transacao {
         this.id = id;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public int getClienteId() {
+        return clienteId;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setClienteId(int clienteId) {
+        this.clienteId = clienteId;
     }
 
     public String getTipo() {
