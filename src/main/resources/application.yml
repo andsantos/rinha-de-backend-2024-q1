@@ -18,3 +18,22 @@ spring:
       enabled: true
       initial-size: 20
       max-size: 20
+
+management:
+  metrics:
+    enable:
+      jvm: true
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      sla:
+        http:
+          server:
+            requests: 50ms, 100ms, 200ms, 400ms
+    tags:
+      application: transacao-app
+  endpoints:
+    web:
+      exposure:
+        include: "*"

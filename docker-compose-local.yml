@@ -22,11 +22,11 @@ services:
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - api
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "0.50"
-#          memory: "100MB"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "200MB"
 
   rinha-api: &api
     build:
@@ -47,11 +47,11 @@ services:
     networks:
       - api
       - monitoramento
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: '0.35'
-#          memory: '200MB'
+    deploy:
+      resources:
+        limits:
+          cpus: '0.35'
+          memory: '150MB'
 
   rinha-api2:
     <<: *api
@@ -71,11 +71,11 @@ services:
       - rinha-api2
     networks:
       - api
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "0.30"
-#          memory: "50MB"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.30"
+          memory: "50MB"
 
   rinha-prometheus:
     image: prom/prometheus:latest
