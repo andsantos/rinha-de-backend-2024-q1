@@ -33,42 +33,6 @@ public class TransacaoServiceImpl implements TransacaoService {
         this.transactionalOperator = transactional;
     }
 
-    // @Override
-    // public Mono<SaldoResponseDTO> criarTransacao(Long id,
-    // TransacaoRequestDTO dto) {
-    // TransacaoAdapter request = new TransacaoAdapter(dto);
-    // return clienteRepository.findById(id)
-    // .switchIfEmpty(Mono
-    // .error(new NotFoundException("Cliente não encontrado")))
-    // .flatMap(cliente -> {
-    // int saldo = cliente.getSaldo();
-    // if ("c".equals(request.getTipo())) {
-    // saldo = saldo + request.getValor();
-    // } else {
-    // saldo = saldo - request.getValor();
-    // }
-    //
-    // if (saldo < (cliente.getLimite() * -1)) {
-    // return Mono.error(new UnprocessableException());
-    // }
-    //
-    // cliente.setSaldo(saldo);
-    //
-    // return clienteRepository.save(cliente)
-    // .flatMap(savedCliente -> {
-    // request.setClienteId(savedCliente.getId());
-    // request.setSaldo(savedCliente.getSaldo());
-    // request.setLimite(savedCliente.getLimite());
-    // return criarTransacao(request)
-    // .flatMap(transacao -> repository
-    // .save(transacao).flatMap(
-    // savedTransacao -> criarSaldo(
-    // request)));
-    // });
-    // }).as(transactionalOperator::transactional);
-    //
-    // }
-
     @Override
     public Mono<SaldoResponseDTO> criarTransacao(Long id,
             TransacaoRequestDTO request) {
