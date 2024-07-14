@@ -40,24 +40,28 @@ services:
       - DATABASE_USER=rinhabackend2024q1
       - DATABASE_PASSWORD=rinhabackend2024q1
       - LOKI_SERVER=rinha-loki
+#      - JAVA_OPTS=-javaagent:/glowroot/glowroot.jar -Dglowroot.collector.address=rinha-glowroot:8181 -server -Dglowroot.agent.id=transacao-app
+      - JAVA_OPTS=-javaagent:/glowroot/glowroot.jar
     ports:
       - 8080:8080
+      - 4001:4000
     depends_on:
       - rinha-database
     networks:
       - api
       - monitoramento
-    deploy:
-      resources:
-        limits:
-          cpus: '0.35'
-          memory: '150MB'
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.35'
+#          memory: '150MB'
 
   rinha-api2:
     <<: *api
     container_name: rinha-api2
     ports:
       - 8081:8080
+      - 4002:4000
 
   rinha-proxy:
     image: nginx
@@ -94,6 +98,8 @@ services:
       - 9090:9090
     networks:
       - monitoramento
+    depends_on:
+      - rinha-proxy
 
   rinha-loki:
     image: grafana/loki
@@ -121,3 +127,31 @@ services:
       - monitoramento
     depends_on:
       - rinha-loki
+
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra
+    ports:
+      - 9042:9042
+    networks:
+      - monitoramento
+    depends_on:
+      - rinha-database
+
+  rinha-glowroot:
+    image: glowroot/glowroot-central
+    container_name: rinha-glowroot
+#    restart: unless-stopped
+    environment:
+      - GLOWROOT_CENTRAL_KEYSPACE=glowroot
+      - GLOWROOT_CENTRAL_CONTACT_POINTS=cassandra
+    volumes:
+      - ./docker/glowroot-central.properties:/usr/share/glowroot-central/glowroot-central.properties
+    ports:
+      - 4000:4000
+      - 8181:8181
+    networks:
+      - api
+      - monitoramento
+    depends_on:
+      - cassandra

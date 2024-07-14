@@ -15,6 +15,7 @@
 	<description>Rinha de backend 2024 Q1</description>
 	<properties>
 		<java.version>17</java.version>
+    <glowroot-agent.version>0.14.0-beta.3</glowroot-agent.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -86,6 +87,58 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <executions>
+              <execution>
+                  <id>glowroot-plugins</id>
+                  <phase>validate</phase>
+                  <goals>
+                      <goal>copy-resources</goal>
+                  </goals>
+                  <configuration>
+                      <outputDirectory>target/glowroot-plugins/</outputDirectory>
+                      <resources>
+                          <resource>
+                              <directory>glowroot-plugins</directory>
+                              <filtering>false</filtering>
+                          </resource>
+                      </resources>
+                  </configuration>
+              </execution>
+          </executions>
+      </plugin>
+      
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <!--<version>${maven-dependency-plugin.version}</version>-->
+          <executions>
+              <execution>
+                  <id>copy-glowroot-jar</id>
+                  <phase>prepare-package</phase>
+                  <goals>
+                      <goal>copy</goal>
+                  </goals>
+              </execution>
+          </executions>
+          <configuration>
+              <artifactItems>
+                  <artifactItem>
+                      <groupId>org.glowroot</groupId>
+                      <artifactId>glowroot-agent</artifactId>
+                      <version>${glowroot-agent.version}</version>
+                      <type>jar</type>
+                      <overWrite>false</overWrite>
+                      <outputDirectory>${project.build.directory}</outputDirectory>
+                      <destFileName>glowroot.jar</destFileName>
+                  </artifactItem>
+              </artifactItems>
+          </configuration>
+      </plugin>
+
 		</plugins>
 	</build>
 
