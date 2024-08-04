@@ -1,0 +1,25 @@
+global:
+  scrape_interval: 5s
+
+#rule_files:
+#  - alert.rules
+
+#alerting:
+#  alertmanagers:
+#  - static_configs:
+#    - targets:
+#      - urlshortner-alertmanager:9093
+
+scrape_configs:
+- job_name: prometheus
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+  - targets:
+    - localhost:9090
+- job_name: app-rinha-api
+  metrics_path: /actuator/prometheus
+  static_configs:
+  - targets: [ 'rinha-api:8080', 'rinha-api2:8080' ]

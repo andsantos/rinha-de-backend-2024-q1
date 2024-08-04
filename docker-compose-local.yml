@@ -1,0 +1,128 @@
+version: '3.8'
+
+networks:
+  monitoramento:
+  api:
+
+volumes:
+  grafana-data:
+  prometheus-data:
+
+services:
+  rinha-database:
+    image: postgres
+    container_name: rinha-database
+    environment:
+      - POSTGRES_USER=rinhabackend2024q1
+      - POSTGRES_PASSWORD=rinhabackend2024q1
+      - POSTGRES_DB=rinhabackend2024q1
+    ports:
+      - 5432:5432
+    volumes:
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - api
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "200MB"
+
+  rinha-api: &api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rinhabackend2024q1
+    container_name: rinha-api
+    environment:
+      - DATABASE_HOSTNAME=rinha-database
+      - DATABASE_NAME=rinhabackend2024q1
+      - DATABASE_USER=rinhabackend2024q1
+      - DATABASE_PASSWORD=rinhabackend2024q1
+      - LOKI_SERVER=rinha-loki
+      - JAVA_OPTS=-javaagent:/glowroot/glowroot.jar
+    ports:
+      - 8080:8080
+      - 4001:4000
+    depends_on:
+      - rinha-database
+    networks:
+      - api
+      - monitoramento
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.35'
+#          memory: '150MB'
+
+  rinha-api2:
+    <<: *api
+    container_name: rinha-api2
+    ports:
+      - 8081:8080
+      - 4002:4000
+
+  rinha-proxy:
+    image: nginx
+    container_name: rinha-proxy
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 9999:9999
+    depends_on:
+      - rinha-api
+      - rinha-api2
+    networks:
+      - api
+    deploy:
+      resources:
+        limits:
+          cpus: "0.30"
+          memory: "50MB"
+
+  rinha-prometheus:
+    image: prom/prometheus:latest
+    container_name: rinha-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - 9090:9090
+    networks:
+      - monitoramento
+    depends_on:
+      - rinha-proxy
+
+  rinha-loki:
+    image: grafana/loki
+    container_name: rinha-loki
+    command:
+        - -config.file=/etc/loki/local-config.yaml
+        - -print-config-stderr=true
+    ports:
+        - 3100:3100
+    networks:
+      - monitoramento
+    depends_on:
+      - rinha-prometheus
+
+  rinha-grafana:
+    image: grafana/grafana
+    container_name: rinha-grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./docker/grafana-ds.yml:/etc/grafana/provisioning/datasources/ds.yml
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    networks:
+      - monitoramento
+    depends_on:
+      - rinha-loki

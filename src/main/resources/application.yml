@@ -1,0 +1,39 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  main:
+    banner-mode: "off"
+
+  jackson:
+    default-property-inclusion: NON_NULL
+    
+  r2dbc:
+    url: r2dbc:postgresql://${DATABASE_HOSTNAME:127.0.0.1}:5432/${DATABASE_NAME:rinhabackend}
+    username: ${DATABASE_USER:root}
+    password: ${DATABASE_PASSWORD:root}
+    pool:
+      enabled: true
+      initial-size: 20
+      max-size: 20
+
+management:
+  metrics:
+    enable:
+      jvm: true
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      sla:
+        http:
+          server:
+            requests: 50ms, 100ms, 200ms, 400ms
+    tags:
+      application: transacao-app
+  endpoints:
+    web:
+      exposure:
+        include: "*"
